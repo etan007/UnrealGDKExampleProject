@@ -1,0 +1,239 @@
+syntax = "proto2";
+enum PBWorkerStatusCode
+{
+    	/** The request was successfully executed and returned a response. */
+		PB_WORKER_STATUS_CODE_SUCCESS = 1;
+		/**
+		 * The request timed out before a response was received. It can be retried, but carefully - this
+		 * usually means the deployment is overloaded, so some sort of backoff should be used to avoid
+		 * making the problem worse. This can also be caused by the target worker's handling code failing
+		 * to respond to the command at all, perhaps due to a bug in its implementation.
+		 */
+		PB_WORKER_STATUS_CODE_TIMEOUT = 2;
+		/**
+		 * The target entity did not exist, or did not have the target component. This probably means the
+		 * entity either hasn't been created yet or has already been deleted. It might make sense to retry
+		 * the request if there is reason to believe the entity hasn't yet been created but will be soon.
+		 */
+		PB_WORKER_STATUS_CODE_NOT_FOUND = 3;
+		/**
+		 * The request could not be executed by a worker, either because the worker lost authority over
+		 * the entity while handling the request, the entity was deleted while handling the request, or no
+		 * worker was authoritative over the entity at all. Assuming the deployment isn't irrecoverably
+		 * broken (e.g. due to misconfigured loadbalancing or crash-looping workers) this is a transient
+		 * failure and can be retried immediately.
+		 */
+		PB_WORKER_STATUS_CODE_AUTHORITY_LOST = 4;
+		/**
+		 * The worker did not have the required permissions to make the request. Permissions do not change
+		 * at runtime, so it doesn't make sense to retry the request.
+		 */
+		PB_WORKER_STATUS_CODE_PERMISSION_DENIED = 5;
+		/**
+		 * The command was delivered successfully, but the handler rejected it. Either the command was
+		 * delivered to a worker that explicitly rejected it by calling
+		 * Worker_Connection_SendCommandFailure, or the request data was rejected as invalid by SpatialOS
+		 * itself. In the latter case, in particular, Worker_Connection_SendCreateEntityRequest will
+		 * return kApplicationError if an entity ID reservation has expired, and
+		 * Worker_Connection_SendEntityQueryResult will return kApplicationError if the result set is
+		 * incomplete.
+		 */
+		PB_WORKER_STATUS_CODE_APPLICATION_ERROR = 6;
+		/** Some other error occurred. This likely indicates a bug in SpatialOS and should be reported. */
+		PB_WORKER_STATUS_CODE_INTERNAL_ERROR = 7;
+}
+
+
+// 仪表度量参数
+message PBWorkerGaugeMetric
+{
+    // 指标名字
+    optional string key = 1;
+    // 指标值
+    optional double value = 2;
+}
+
+// 直方图度量桶参数
+message PBWorkerHistogramMetricBucket
+{
+    // 上限
+    optional double upper_bound = 1;
+    // 小于或等于上限的观察数
+    optional uint32 samples = 2;
+}
+// 直方图度量参数
+message PBWorkerHistogramMetric
+{
+    // 指标名字
+    optional string key = 1;
+    // 所有观测值的总和
+    optional double sum = 2;
+    // 桶数量
+    optional uint32 bucket_count = 3;
+    // 桶数组
+    repeated PBWorkerHistogramMetricBucket buckets = 4;
+}
+
+// 发送到rcell的指标参数
+message PBWorkerMetrics
+{
+    // 本worker的负载值,没有就不上报该值
+    optional double load = 1;
+    // 仪表度量数量 todo 该值可以省略...
+    optional uint32 gauge_metric_count = 2;
+    // 仪表度量数组
+    repeated PBWorkerGaugeMetric gauge_metrics = 3;
+    // 直方图度量数量
+    optional uint32 histogram_metric_count = 4;
+    // 直方图度量数组
+    repeated PBWorkerHistogramMetric histogram_metrics = 5;
+}
+message PBSchemaComponentData
+{
+    optional bytes data = 1;
+}
+
+message PBWorkerComponentDataHandle
+{
+
+}
+
+// 用于通过原始架构数据或某些用户定义的句柄类型
+message PBWorkerComponentData
+{
+    // 保留数据
+    optional bytes reserved = 1;					
+    // 组件id
+    optional uint32 component_id = 2;
+    // todo 组件架构数据
+    optional PBSchemaComponentData schema_type = 3;
+    // todo 组件数据句柄
+    optional PBWorkerComponentDataHandle user_handle = 4;
+}
+// 表示具有ID和组件数据快照的实体
+message PBWorkerEntity
+{
+   optional int64 entity_id = 1; 
+   // 实体组件数量
+   optional uint32 component_count = 2;
+   // 实体组件数据数组
+   repeated PBWorkerComponentData components = 3;
+}
+
+// 组件权限状态
+enum PBWorkerAuthority
+{
+	PB_WORKER_AUTHORITY_NOT_AUTHORITATIVE = 0;
+	PB_WORKER_AUTHORITY_AUTHORITATIVE = 1;
+	PB_WORKER_AUTHORITY_AUTHORITY_LOSS_IMMINENT = 2;
+}
+
+message PBWorkerComponentUpdate
+{
+    // 保留数据
+    optional bytes reserved = 1;	
+    // 组件id
+    optional uint32 component_id = 2;
+    // todo 组件架构数据
+    optional PBSchemaComponentData schema_type = 3;
+    // todo 组件数据句柄
+    optional PBWorkerComponentDataHandle user_handle = 4;
+}
+
+message PBWorkerAttributes
+{
+    // 工作进程属性数量
+    optional uint32 attribute_count = 1;
+    // 与worker关联的属性
+    repeated bytes attributes = 2;
+}
+
+message PBWorkerCommandRequest
+{
+    // 保留数据
+    optional bytes reserved = 1;
+    // 组件id
+    optional uint32 component_id = 2;
+    // 命令序号
+    optional uint32 command_index = 3;
+    // todo 组件架构数据
+    optional PBSchemaComponentData schema_type = 4;
+    // todo 组件数据句柄
+    optional PBWorkerComponentDataHandle user_handle = 5;
+}
+
+message PBWorkerCommandResponse
+{
+    // 保留数据
+    optional bytes reserved = 1;
+    // 组件id
+    optional uint32 component_id = 2;
+    // 命令序号
+    optional uint32 command_index = 3;
+    // todo 组件架构数据
+    optional PBSchemaComponentData schema_type = 4;
+    // todo 组件数据句柄
+    optional PBWorkerComponentDataHandle user_handle = 5;
+}
+
+message PBWorkerEntityIdConstraint
+{
+   optional int64 entity_id = 1;
+} 
+
+message PBWorkerComponentConstraint
+{
+    optional uint32 component_id = 2;
+}
+
+message PBWorkerSphereConstraint
+{
+    optional double x = 1;
+    optional double y = 2;
+    optional double z = 3;
+    optional double radius = 4;
+}
+
+message PBWorkerAndConstraint
+{
+    repeated PBWorkerConstraint constraints = 1;
+}
+
+message PBWorkerOrConstraint
+{
+    repeated PBWorkerConstraint constraints = 1;
+}
+
+message PBWorkerNotConstraint
+{
+    optional PBWorkerConstraint constraint = 1;
+}
+ 
+message PBWorkerConstraintUnion
+{
+	optional PBWorkerEntityIdConstraint entity_id_constraint = 1;
+	optional PBWorkerComponentConstraint component_constraint = 2;
+	optional PBWorkerSphereConstraint sphere_constraint = 3;
+	optional PBWorkerAndConstraint and_constraint = 4;
+	optional PBWorkerOrConstraint or_constraint = 5;
+	optional PBWorkerNotConstraint not_constraint = 6;
+}
+
+enum PBWorkerConstraintType
+{
+	PB_WORKER_CONSTRAINT_TYPE_ENTITY_ID = 1;
+	PB_WORKER_CONSTRAINT_TYPE_COMPONENT = 2;
+	PB_WORKER_CONSTRAINT_TYPE_SPHERE = 3;
+	PB_WORKER_CONSTRAINT_TYPE_AND = 4;
+	PB_WORKER_CONSTRAINT_TYPE_OR = 5;
+	PB_WORKER_CONSTRAINT_TYPE_NOT = 6;
+}
+
+/** A single query constraint. */
+message PBWorkerConstraint 
+{
+	/** The type of constraint, defined using Worker_ConstraintType. */
+	optional uint32 constraint_type = 1;
+	/** Union with fields corresponding to each constraint type. */
+	optional PBWorkerConstraintUnion constraint = 2;
+}

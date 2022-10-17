@@ -1,0 +1,9 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a53cfdbd_002D890f_002D4cdb_002Db005_002Dc60ba2187f70/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests in category 'CommandletContext'" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Category&gt;CommandletContext&lt;/Category&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=adc594ad_002D3d7e_002D4dc3_002D8549_002Dc26725bf4ff6/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GIVEN_spatial_type_class_WHEN_checked_if_supported_THEN_is_supported" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;UnrealTest::F7864A33-540D-4A56-A798-6FADFE454401::Windows,Version=v10.0.22000::SpatialGDK.SpatialGDKEditor.SchemaGenerator.GIVEN_spatial_type_class_WHEN_checked_if_supported_THEN_is_supported&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
