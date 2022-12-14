@@ -187,3 +187,8 @@ message AuthorityDelegation{
   optional uint32 id = 1[default = 65];
   map<uint32, uint64> delegations = 2;
 }
+
+message Partition{
+  optional uint32 id = 1[default = 66];
+  optional uint64 worker_connection_id = 2;
+}

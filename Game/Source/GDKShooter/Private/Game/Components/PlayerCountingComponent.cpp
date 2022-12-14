@@ -4,7 +4,7 @@
 #include "Net/UnrealNetwork.h"
 #include "GDKLogging.h"
 
-
+#include "GameFramework/GameStateBase.h"
 UPlayerCountingComponent::UPlayerCountingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
