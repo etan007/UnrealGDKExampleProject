@@ -1,0 +1,880 @@
+    # 协议头
+.package {
+    type      0 : integer
+    session   1 : integer
+    timestamp 2 : integer
+}
+
+# 通用协议类型
+.common {
+    .ServerCommon {
+        mc_area_id       1 : integer  # 服务端集群id
+    }
+       # 平台统计
+    .PlatformCommon {
+        player_friends_num  1 : integer  # 玩家好友数量
+        client_version      2 : string   # 客户端版本
+        system_hardware     3 : string   # 移动终端机型
+        telecom_oper        4 : string   # 运营商
+        network             5 : string   # 3G/WIFI/2G
+        client_ip           6 : string   # 客户端IP
+        imei                7 : string   # Imei设备(android必选)
+        idfa                8 : string   # Idfa(IOS必选)
+        lang                9 : string   # 用户语言(语言缩写)
+        devicetype         10 : string   # 设备型号
+        mac                11 : string   # mac地址
+    }
+
+    .OrderInfo {
+        orderid     1 : integer  # 订单id
+        transid     2 : integer  # 交易id
+        # payurl      3 : string   # 支付url
+        productid   4 : integer  # 商品id
+        productnum  5 : integer  # 商品数量
+        createtime  6 : integer  # 订单创建时间
+    }
+
+    .ShopProduct {
+        productid   1 : integer # 商品id
+        productnum  2 : integer # 商品数量
+    }
+
+    .ItemNotify {
+        id      1 : integer # 道具id
+        uniqid  2 : string # 唯一id
+        count   3 : integer # 数量
+    }
+
+    .RankInfo {
+        index    1 : integer # 排名
+        uid      2 : integer # 玩家uid
+        score    3 : integer # 数量
+        name     4 : string  # 姓名
+        guild_name 5 : string #公会名
+		level      6 : integer # 等级
+    }
+
+}
+# 角色协议类型
+.player {
+    # 物品
+    .Itemblock {
+        idx    1 : integer # 插槽序号
+        uniqid 2 : string # 插槽物品唯一id
+        itemid 3 : integer # 插槽物品模板id
+    }
+    .Item {
+        id              1 : integer # 物品模板id
+        count           2 : integer # 数量
+    }
+    .UinqItem {
+        uniqid          1 : string # 唯一id
+        id              2 : integer # 物品模板id
+        block           3 : *player.Itemblock(idx)  # 插槽
+        begts           4 : integer # 起始时间
+        endts           5 : integer # 结束时间
+        bindid          6 : integer # 镶嵌id
+    }
+    .UniqItemList {
+        id              1 : integer # 物品模板id
+        itemlist        2 : *player.UinqItem(uniqid) # 道具列表
+    }
+    .Role {
+        id              1 : integer # 角色模板id
+        block           2 : *player.Itemblock(idx)  # 插槽
+        begts           4 : integer # 起始时间
+        endts           5 : integer # 结束时间
+    }
+    #皮肤
+    .Skin {
+        id              1 : integer # 皮肤模板id
+        count           2 : integer # 数量
+        experience_start_time 3 : integer # 皮肤体验开始时间
+        experience_end_time 4 : integer   # 皮肤体验结束时间
+    }
+    # 任务
+    .Mission {
+        mission_id      1 : integer         # 任务id
+        progress        2 : integer         # 任务进度(0-任务配置的最大进度)
+        status          3 : integer         # 任务状态1未完成2已完成3已领取
+    }
+    # 任务组
+    .MissionGroup {
+        group_id           1 : integer         # 任务组id
+        missions           2 : *player.Mission(mission_id)   # 任务列表
+    }
+    # 活跃度
+    .Active {
+        id                  1 : integer         # 活跃度id
+        status              2 : integer         # 活跃度阶段完成状态
+    }
+     # 活跃度组
+    .ActivityGroup {
+        group_id          1 : integer              # 任务组id
+        activitys         2 : *player.Active(id)   # 活跃度列表
+        cur_point         3 : integer              # 当前活跃度点数
+    }
+    # 邮件
+    .Mail {
+        mail_id         1 : string          # 邮件id
+        sender          2 : string          # 发送者
+        title           3 : string          # 邮件标题
+        content         4 : string          # 邮件内容
+        send_ts         5 : integer         # 发件时间
+        expire_ts       6 : integer         # 过期时间
+        attachment      7 : *player.Item    # 邮件附件
+        status          8 : integer         # 0 未读1已读2已领取
+        webmail_id      9 : string          # web邮件id
+        mtype           10: integer         # 邮件类型（1公共2私有）
+    }
+    # 属性.
+    .Attribute {
+        id              1 : integer
+        value           2 : integer
+    }
+    # 装备
+    .Equipment {
+        uniqid          1 : string # 唯一id
+        id              2 : integer # 物品模板id
+        begts           3 : integer # 起始时间
+        endts           4 : integer # 结束时间
+        fixed_attr      5 : *player.Attribute
+        rand_attr       6 : *player.Attribute
+        wear_roleid     7 : integer
+    }
+
+
+    # 服务器数据，不必下发给客户端
+    .ServerData {
+        pay_version            1 : integer
+        lastlogin_channel      2 : integer             # 记录最后一次登录渠道，用于存量日志
+        lastlogin_platid       3 : integer             # 最后一次平台
+        account_id             4 : integer             # 当前登录的第三方帐号id
+        firstlogin_ts          5 : integer             # 第一次登录时间(注册时填写)
+        lastlogin_ts           6 : integer             # 最后一次登录时间
+        account_firstlogin_ts  7 : integer             # 第三方帐号第一次登录时间(帐号注册时填写)
+        account_firstlogin_serverid 8: integer         # 第三方帐号第一次登录的服务器id(帐号注册时填写)
+        lastlogin_channel_type 9 : integer             # 记录最后一次登录渠道类型
+        login_days            10 : integer             # 连续登录天数
+        login_days_total      11 : integer             # 累计登录天数
+        online_time           12 : integer             # 单次在线时长(分钟)
+        online_time_total     13 : integer             # 累计在线时长(分钟)
+        friend_count          14 : integer             # 拥有好友数量(客户端上报)
+    }
+ 
+
+    # 好友信息
+    .FriendBaseInfo {
+        account_id      1 : string          # 账号id
+        uid             2 : integer         # 玩家id
+        star_count      3 : integer         # 玩家等级
+    }
+ 
+    .Tips {
+        id          1 : integer     # id
+        tip_content 2 : string      # tip内容
+        StartTime   3 : integer     # 开始时间
+        EndTime     4 : integer     # 结束时间
+    }
+
+    .Bag {
+        items          1 : *player.Item(id)                # 物品列表
+        uniqitems      2 : *player.UniqItemList(id)        # 不可堆叠物品列表         
+        human          3 : *player.Role(id)                # 人类角色
+        count          4 : integer                         # 道具总量
+    }
+
+    #排行榜数据
+    .RankData {
+        uid             1: integer                             #玩家UID
+        win_count       2: integer                             #累计获胜次数
+        win_gold        3: integer                             #累计获得金币数
+        win_cm          4: integer                             #累计获得筹码数
+    }
+
+    #个人战绩数据
+    .playerRecords {
+        pay_games       1: integer                         #付费场
+        free_games      2: integer                         #免费场
+        nickname        3: string                          #昵称
+        pay_wins        4: integer                         #付费胜利场次
+        free_wins       5: integer                         #免费胜利场次
+        record_roomids  6: *string                         #战绩详情(最近10场)
+    }
+
+    # 角色基本信息(完整)
+    .Basic  {
+        # 基础模块
+        name            1 : string                              # 昵称
+        lang            2 : integer                             # 玩家客户端显示语言
+        country         3 : integer                             # 国家id
+        flag            4 : integer                             # 国旗id
+        level           5 : integer                             # 玩家等级
+        exp             6 : integer                             # 玩家经验
+        sex             7 : integer                             # 性别
+        guild_uid       8 : integer                             # 公会id
+        guild_name      9 : string                              # 公会名称
+        # 外观数据
+        role_id         10: integer                             # 当前出战角色id
+        #排行榜数据
+        zrank_data      11:player.RankData                      #总榜数据
+        wrank_data      12:player.RankData                      #周榜数据
+        # 任务模块
+        # 邮件模块
+        # 好友模块
+        # 公会模块
+    }
+
+    .Treasure {
+        boxid          1 : integer                         #宝匣id
+        had_use_count  2 : integer                         #角色id
+        items          3 : *player.Item                    #物品列表
+    }
+
+    .Personal {
+        share                       1 : integer                 # 分享剩余次数
+        daily_version               2 : integer                  #每日刷新操作的时间戳，一般是0点
+        week_version                3 : integer                  #每周刷新操作的时间戳，一般是周一0点
+        month_version               4 : integer                  #每月刷新操作的时间戳，一般是1号0点
+        # 任务模块
+        mission_groups              5 : *player.MissionGroup(group_id)        # 任务组列表
+        # 物品模块
+        bag                         6 : player.Bag               # 背包
+        # 商城已购买商品模块
+        shop                        7 : *common.ShopProduct(productid)
+        # 邮件模块
+        # 好友模块
+        # 公会模块
+        # 宝匣模块
+        treasure_data               8 : *player.Treasure(boxid)   # 宝匣数据(需要存储的宝匣数据,根据宝匣box_id进行存储)
+        # 红点数据
+        redpoint_data               9 : string
+        # 活跃度系统
+        activity_groups             10 : *player.ActivityGroup(group_id)        # 活跃度组列表
+    }
+
+    .SvrPlayer {
+        uid             1 : integer                    # 玩家ID
+        basic           2 : player.Basic               # 角色基本信息
+        personal        3 : player.Personal            # 玩家私有信息
+        create_ts       4 : integer                    # 创建时间
+        version         5 : integer                    # 回存版本    
+        svr_data        6 : player.ServerData          # 服务器数据(客户端不读取)
+        open_id         7 : string                     # open_id
+        logints         8 : integer                    # 登录时间
+        game_duration   9 : integer                    # 局内游戏时长
+        player_record   10 : player.playerRecords      # 玩家战绩
+        dsdata          11 : player.DsPlayer           # 玩家的ds数据
+    }
+    #角色信息
+    .Player {
+        uid             1 : integer                 # 玩家ID
+        basic           2 : player.Basic            # 角色基本信息
+        personal        3 : player.Personal         # 玩家私有信息
+        create_ts       4 : integer                 # 创建时间
+        version         5 : integer                 # 回存版本
+        open_id         6 : string                  # open_id
+        logout          7 : integer                 # 上次登出时间 
+    }
+
+
+    #角色基本信息(简洁)
+    .BasicPlayer {
+        uid             1 : integer     # 玩家ID
+        name            2 : string      # 昵称
+        flag            3 : integer     # 国旗id
+
+    }
+
+    #角色访问基本信息
+    .VisiPlayer {
+        uid             1 : integer     # 玩家id
+        name            2 : string      # 昵称
+        star_cnt        3 : integer     # 玩家等级
+        role_id         4 : integer     # 角色id
+    }
+    #角色ds信息
+    .DsPlayer {
+        team_flag       1 : integer     # 队伍标识
+        room_id         2 : string      # 房间id
+        room_type       3 : integer     # 房间类型
+        skill_id        4 : integer     # 技能id
+    }
+
+}
+
+.debug {
+    .DelayInfo {
+        dtype  1 : integer  # 统计类型(1:登录延迟,2:pvp匹配延迟,3:掉线次数, 4:CheckVersion, 5:video_post_failed, 100:delay_ping)
+        dvalue 2 : integer  # 延迟时间
+    }
+}
+
+.notice {
+    .NoticeInfo {
+        notice_id           1 : integer  # 编号
+        notice_type         2 : integer  # 类型
+        notice_startTime    3 : integer  # 开始时间
+        notice_endTime      4 : integer  # 结束时间
+        notice_sortid       5 : integer  # 排序ID
+        notice_imgURLBig    6 : string   # 大图标连接地址
+        notice_imgURLSmall  7 : string   # 小图标连接地址
+        notice_title        8 : string   # 标题
+        notice_content      9 : string   # 内容
+        notice_button      10 : string   # 内容
+        notice_link        11 : string   # 跳转连接地址
+        notice_jumpId      12 : integer  # 跳转编号
+		notice_qqnum       13 : string  # QQ号
+		notice_qq_andkey       14 : string  # QQ号androidkey
+		notice_qq_ioskey       15 : string  # QQ号Ioskey
+    }
+}
+.match{
+    .RoomInfo{
+        room_id            1: string   # 房间ID
+        room_type          2: integer  # 房间类型
+        player_num         3: integer  # 房间人数
+    }
+    .RoomSessions{
+        uid                1: integer  # 玩家ID
+        PlayerId           2: string   # 玩家ID
+        IpAddress          3: string   # 服务器ip
+        Port               4: integer  # 服务器端口
+        PlayerSessionId    5: string   # 玩家session
+        GameServerSessionId 6: string  # 游戏服务器session
+        err_code            7:integer  # 加入房间错误码
+        err_msg             8:string   # 加入房间错误信息
+    }
+    
+}
+#######################################################################
+
+
+#########  login  #########
+
+# 通信协议(create)
+Create 1 {
+    response {
+        uid    1 : integer # 用户id
+        token  2 : string  # 校验码
+        result 3 : integer # 结果码,成功返回0
+    }
+}
+
+# 登录(login)
+Login 2 {
+    request {
+        channel_type    1 : integer              # 渠道类型
+        account_type    2 : integer              # 登录的账号类型(0-本地账号 1-脸书 2-GP)
+        lang            3 : integer              # 客户端语言
+        account_id      4 : string               # 账户id(用户id/脸书id/GPid)
+        client_info     6 : common.PlatformCommon # 统计信息(机型，网络等) (未获取可以不填充)
+        platform        7 : integer              # (0:ios,1:android)
+        channel_id      8 : integer              # channel_id
+    }
+    response {
+        errcode         1 : integer     # 错误码(0:成功, -1:无效帐号, -2:验证码错误, -3:被封号,-4:被锁定, -5:被踢, -6:服务器忙,)
+        timestamp       2 : integer     # 服务器时间
+        uid             3 : integer     # 用户id
+        account_type    4 : integer     # 登录的账号类型(0-本地账号 1-脸书 2-GP)
+        end_ts          5 : integer     # 解封时间戳
+        serverid        6 : integer     # 服务器id(自营：1-500,tanyu:501-2000,苹果沙盒：999)
+    }
+}
+
+# 检查版本(check_version)
+CheckVersion 3 {
+    request {
+        client_version 1 : string                # 客户端程序版本
+        platform       2 : string                # 客户端平台仅("ios", "android", "wp", "pc")
+        data_ver       3 : string                # 客户端数据版本
+        client_sig     4 : string                # 客户端的签名(防止二次打包验证字段)
+        client_type    5 : integer               # 客户端打包类型(参考约定)
+    }
+    response {
+        code             1 : integer             # 错误码(0:不需要更新, 1:更新程序版本, 2:服务器维护中, 3:表示客户端版本高于服务器能接收的版本, 4:有更新需要重启游戏, 5: 签名不对)
+        version          2 : string              # 当前服务器版本号
+        salt             3 : string              #
+        url              4 : string              # 新版本下载地址
+        lua_conf         5 : string              # lua配置(crc,url_addr;...)
+        datasheet_conf   6 : string              # datasheet配置(crc,url_addr;...)
+        ud               7 : common.ServerCommon # 服务器信息(腾讯支付区域等)
+        client_ver       8 : string              # 要求客户端接入版本号
+        about_server     9 : string              # 服务器信息
+    }
+}
+
+# 绑定账号(bind)
+Bind 4 {
+    request {
+        channel_type    1 : integer              # 渠道类型
+        account_type    2 : integer              # 绑定的账号类型(1-脸书 2-GP)
+        account_id      3 : string               # 账户id(脸书id/GPid)
+        token           4 : string               # 密钥(脸书访问串(accessToken)/GPtoken)
+    }
+    response {
+        channel_type    1 : integer              # 渠道类型
+        account_type    2 : integer              # 绑定的账号类型(1-脸书 2-GP)
+        errcode         3 : integer              # 错误码(0:绑定成功, -1:FB/GP帐号验证失败, -2:游戏账号验证码错误, -3:该游戏账号已经被其他FB/GP账号绑定, -4:该FB/GP账号已经绑定其他游戏账号)
+    }
+}
+
+# 被踢下线(kicked)
+Kicked 8 {
+    request {
+        code        1 : integer # 原因（1:其他设备登入该账号,2:系统强制下线）
+    }
+}
+
+# 同步时间(sync_time)
+SyncTime 14 {
+    request {
+        timestamp       1 : integer     # 客户端时间
+    }
+    response {
+        timestamp       2 : integer     # 服务器时间
+    }
+}
+
+#########  player  #########
+
+#加载角色(load_player)
+LoadPlayer 100 {
+    request {
+        uid 1 : integer # 用户id
+    }
+    response {
+        player      1 : player.Player   # 角色信息
+        branch_season_term 2: integer  #season term
+        branch_season_endtime 3:integer #season endtime
+    }
+}
+#设置出战角色
+SetCharacterInfo 101 {
+    request {
+        uid 1 : integer # 用户id
+        nick_name 2 : string #昵称
+        role_id 3 : integer #id 
+    }
+    response {
+        errcode 1 : integer # 错误码(0:成功, 1:失败)
+    }
+}
+#通知玩家道具变化
+ItemChangeNotify 102 {
+    request {
+       iteminfos    1 : *common.ItemNotify # 道具信息
+       reason       2 : integer            # 变化原因
+    }
+}
+ 
+# 获取角色信息(get_player_info)
+GetPlayerInfo 127 {
+    request {
+        uids            1 : *integer        # 用户id
+    }
+    response {
+        players         1 : *player.VisiPlayer(uid) # 访问的角色信息
+    }
+}
+
+#########   mission  #########
+# 获取任务奖励(get_mission_reward)
+GetMissionReward 129 {
+    request {
+        mission_id 1 : integer # 任务id
+    }
+    response {
+        errcode 1 : integer         # 错误码(0:成功, 1:任务不存在, 2:任务未完成, 3:任务奖励已领取 4:添加物品错误)
+        items   2 : *player.Item    # 道具信息
+    }
+}
+# 刷新任务(refresh_mission)
+RefreshMission 130 {
+    request {
+        mission_group 1 : integer # 任务分组
+    }
+    response {
+        missions   1 : *player.Mission(mission_id)   # 任务
+    }
+}
+# 刷新组任务通知
+RefreshGroupMissionNotify 131 {
+    request {
+         mission_group                 1 : player.MissionGroup        # 一个任务组
+         is_keep                       2 : integer # 是否保留该组原有任务数据 0:不保留, 1:保留
+    }
+}
+# 刷新组活跃度通知
+RefreshGroupActivityNotify 132 {
+    request {
+         activity_group                 1 : player.ActivityGroup        # 一个活跃度组
+         is_keep                       2 : integer # 是否保留该组原有任务数据 0:不保留, 1:保留
+    }
+}
+# 获取活跃度奖励(get_active_reward)
+GetActiveReward 133 {
+    request {
+        id 1 : integer # 活跃度id
+    }
+    response {
+        errcode 1 : integer         # 错误码(0:成功, 1:活跃度任务不存在, 2:任务未完成, 3:任务奖励已领取 4:添加物品错误)
+        items   2 : *player.Item    # 道具信息
+    }
+}
+ 
+#########   match  #########
+#获取匹配房间列表
+LoadRoomList 200 {
+    request {
+        room_type       1 : integer     # 房间类型
+    }
+    response {
+        room_list       1 : *match.RoomInfo   # 房间列表
+    }
+}
+#进入房间
+JoinRoom 201 {
+    request {
+        room_id       1 : string     # 房间id
+        uids          2 : *integer   # 用户id
+        party_id      3 : string     # party_id
+        room_type     4 : integer    # 房间类型
+    }
+    response {
+        code 1 : integer             # 0成功 其他失败
+    }
+}
+#服务器进入房间通知(客户端收到后判断自己的party_id和通知的是否一致)
+JoinRoomNotify 202 {
+    request {
+        server_session 1 : match.RoomSessions #房间连接信息
+    }
+}
+######### mail  #########
+#加载邮件(load_mail)
+LoadMail 300 {
+    request {
+        uid     1 : integer     # 用户id
+    } 
+    response {
+        mails   1 : *player.Mail(mail_id)   # 邮件列表
+    }
+}
+
+#推送邮件(mail_notify)
+MailNotify 301 {
+    request {
+        mails   1 : *player.Mail(mail_id)   # 邮件
+    }
+}
+# 领取邮件(mail_receive)
+MailReceive 302 {
+    request {
+        mail_id         1 : string          # 邮件id
+        op_type         2 : integer         # 1读 2领取
+    }
+    response {
+         errcode 1 : integer         # 错误码(0:成功, 1:邮件不存在, 2:邮件已读取, 3:邮件已领取,4邮件没有附件,5背包空间不足)
+         items   2 : *player.Item    # 道具信息        
+    }    
+}
+
+# 删除邮件(mail_del)
+MailDel 303 {
+    request {
+        mail_ids         1 : *string          # 邮件id
+    }
+    response {
+         errcode 1 : integer                 # 错误码(0:成功, 1:失败)
+         mails   2 : *player.Mail(mail_id)   # 邮件列表
+    }    
+}
+
+# 一键领取邮件(mail_all_receive)
+MailAllReceive 304 {
+    request {
+        uid     1 : integer     # 用户id
+    }
+    response {
+        errcode 1 : integer     # 错误码(0:成功,1部分领取成功，2背包满不能领取)
+        mails   2 : *player.Mail(mail_id)   # 邮件列表
+        items   3 : *player.Item    # 道具信息    
+    }
+}
+
+# 一键删除邮件(mail_all_del)
+MailAllDel 305 {
+    request {
+        uid     1 : integer     # 用户id
+    }
+    response {
+        mails   1 : *player.Mail(mail_id)   # 邮件列表
+    }
+}
+
+#############   notice  ##############
+# 公告
+GameNotice 500 {
+    request {
+        uid 1 : integer # 玩家id
+    }
+    response {
+        notice_infoes 1 : *notice.NoticeInfo  # 公告信息列表
+    }
+}
+#########  operation  #########
+# 支付商品(pay_product)
+# 推送注册(push_register)
+# 创建支付订单
+ApplyOrder 600 {
+    request {
+        recharge_type   1 : integer     # 充值类型(10-steam沙盒 11-steam商用)
+        product_id      2 : integer     # 商品id
+        product_num     3 : integer     # 商品数量
+    }
+    response {
+        errorcode       1 : integer     # 错误码
+        orderinfo       2 : common.OrderInfo   # 订单信息
+    }
+}
+#创建订单通知
+ApplyOrderNotify 601 {
+    request {
+        orderinfo 1 : common.OrderInfo # 订单信息
+    }
+}
+# 检查支付订单
+CheckOrderComplete 602 {
+    request {
+        orderid         1 : integer     # 订单号
+    }
+    response {
+        errorcode       1 : integer     # 错误码
+    }
+}
+#订单道具发送通知
+OrderCompSendItemNotify 603 {
+    request {
+        errorcode   1 : integer         # 错误码  0--正确 1--没找到商品  2--订单错误
+        items       2 : *player.Item    # 道具信息
+    }
+}
+
+# 使用宝匣
+UseTreasureBox 604 {
+    request {
+        boxid         1 : integer     # 宝匣ID
+        count         2 : integer     # 使用次数
+    }
+    response {
+        errorcode       1 : integer     # 错误码(0:成功, 1:传入参数错误, 2:用户数据加载不成功, 3:箱子数量不够, 4:消耗货币不够, 5: 奖池ID配置错误, 6:随机出错，7：固定宝匣数据错误,8池子里没有可供随机的物品，9Item表配置错误，10递增付费宝匣超出次数)
+        iteminfos       2 : *common.ItemNotify # 道具信息
+    }
+}
+
+#自选宝匣--选物品
+TreasuseBoxSelectItemBySelf 605 {
+    request {
+        idindex         1 : integer     # 宝匣ID -- 索引
+        boxid           2 : integer     # 宝匣ID 
+    }
+    response {
+        errorcode       1 : integer     # 错误码(0:成功, 1:传入参数错误, 2:用户数据加载不成功, 3:箱子数量不够, 4:消耗货币不够, 5: 奖池ID配置错误, 6:随机出错，7：固定宝匣数据错误,8池子里没有可供随机的物品，9Item表配置错误，10递增付费宝匣超出次数)
+        iteminfos       2 : *common.ItemNotify # 道具信息
+    }
+}
+
+# 获取排行榜信息
+GetRankInfo 606 {
+    request {
+        ranktype          1 : integer     # 排行榜类型(0总排行榜/1周排行榜)
+        rankindex         2 : integer     # 排行榜索引(0胜利1金币2筹码)
+    }
+    response {
+        errorcode             1 : integer     # 错误码(0:成功, 1:失败)
+        allrankinfos          2 : *common.RankInfo # 排行榜信息
+        selfrankinfo          3 : common.RankInfo  # 自己的排行榜信息
+    }
+}
+
+#########  bag  ###########
+#获取背包信息
+GetBagInfo 610 {
+    request {
+        uid 1 : integer # 玩家id
+    }
+    response {
+        errorcode   1 : integer     # 错误码  0--正确 1--错误
+        baginfo     2 : player.Bag  # 背包信息
+    }
+}
+
+#穿戴时装
+WearSkin 611 {
+    request {
+        uid     1 : integer # 玩家id
+        roleid  2 : integer # 角色id
+        block   3 : *player.Itemblock(idx)  # 插槽
+    }
+    response {
+        errorcode   1 : integer # 错误码  0--正确
+        roleid      2 : integer # 角色id
+        block       3 : *player.Itemblock(idx)  # 插槽
+    }
+}
+
+#分解道具
+DisItems 612 {
+    request {
+        uid         1 : integer # 玩家id
+        items       2 : *player.Item
+        uniqitems   3 : *player.UinqItem
+    }
+    response {
+        errorcode   1 : integer # 错误码  0--正确 1--错误
+    }
+}
+
+#########  shop  ###########
+#商城购买
+ShopBuy 620 {
+    request {
+        uid         1 : integer # 玩家id
+        products    2 : *common.ShopProduct # 商品列表
+    }
+    response {
+        errorcode   1 : integer # 错误码  0--正确 1--错误
+    }
+}
+
+#########  redpoint  ###########
+#红点系统
+ReadRedpoint 621 {
+    request {
+        uid         1 : integer # 玩家id
+    }
+    response {
+        errorcode       1 : integer # 错误码  0--正确 1--uid错误 2--没有数据
+        redpoint_data   2 : string  # 红点数据
+    }
+}
+
+SaveRedpoint 622 {
+    request {
+        uid             1 : integer # 玩家id
+        redpoint_data   2 : string  # 红点数据
+    }
+    response {
+        errorcode       1 : integer # 错误码  0--正确 1--uid错误 2--数据错误
+    }
+}
+
+#支付信息推送(pay_info_notify)
+#########  stat  ###########
+#统计,战斗结束(stat_battle_end)
+
+
+
+#########  debug  #########
+
+# 客户端心跳检测(ping)
+Ping 1000 {
+    request {
+        timestamp 1 : integer
+    }
+    response {
+        lag 1 : integer  # 时间差
+    }
+}
+
+# oops报错提示(oops_notify)
+OopsNotify 1010 {
+    request {
+        code  1 : string  # 原因
+        otype 2 : integer # (0:默认, 1:米大师错误)
+    }
+}
+
+# 网络延迟报告(delay_report)
+DelayReport 1011 {
+    request {
+        delays 1 : *debug.DelayInfo  #延迟数据
+    }
+}
+
+# 网络延迟ping(delay_ping)
+DelayPing 1012 {
+    request {
+        pid 1 : integer  # ping id
+    }
+}
+
+# 访问城堡(visit_raw_town)
+VisitRawPlayer 1013 {
+    request {
+        uid 1 : integer
+    }
+    response {
+        player  1 : player.SvrPlayer
+    }
+}
+
+# GM调试接口(gm_debug)
+GmDebug 1020 {
+    request {
+        args   1 : string   # 命令内容
+    }
+}
+
+# 服务器日志输出(lua_out)
+LuaOut 1021 {
+    request {
+        otype   1 : integer # (0:输出类型)
+        out_str 2 : string  #
+    }
+}
+
+# 创建新runtime(new_runtime)
+NewRuntime 1030 {
+    request {
+        runid           1 : integer     # runtime id
+    }
+    response {
+        errcode         1 : integer     # 错误码(0:成功, -1:无效帐号, -2:验证码错误, -3:被封号,-4:被锁定, -5:被踢, -6:服务器忙)
+        timestamp       2 : integer     # 服务器时间
+        runid           3 : integer     # runtime id
+    }
+}
+
+# 加载runtime(load_runtime)
+LoadRuntime 1031 {
+    request {
+        runid           1 : integer     # runtime id
+    }
+    response {
+        timestamp       1 : integer     # 服务器时间
+        runid           2 : integer     # runtime id
+    }
+}
+
+# 同步时间sync_time(sync_runtime)
+SyncRuntime 1032 {
+    request {
+    }
+    response {
+        timestamp       1 : integer     # 服务器时间
+    }
+}
+
+# 玩家加入runtime(enter_user)
+EnterUser 1033 {
+    request {
+        runid           1 : integer     # runtime id
+        uid             2 : integer     # uid
+    }
+    response {
+        errcode         1 : integer     # 错误码
+        timestamp       2 : integer     # 服务器时间
+    }
+}

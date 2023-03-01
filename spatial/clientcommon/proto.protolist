@@ -1,0 +1,200 @@
+# 协议分类
+# 1. 无回应       如 build:[]
+# 2. 协议自带回应 如 load_town
+#
+
+login
+{
+    # ---- [1, 99]
+    create              = 1  # 创建帐户
+    login               = 2  # 登录帐号
+    check_version       = 3  # 检查版本
+    bind                = 4  # 绑定账号
+    kicked:[]           = 10 # 被踢下线
+    #push_bind:[]       = 11 # 推送绑定
+    #friend_bind            = 12 # friend绑定
+    #deactivate         = 13 # 注销账号
+    sync_time           = 14 # 同步时间
+    robot_login         = 15 # 机器人登陆
+}
+
+player
+{
+    # ---- [100, 149] [600, 699]
+    load_player                 = 100 # 加载角色(player.personal.achs)
+    unlock_hero                 = 101 # 解锁英雄
+    refresh_card_set            = 102 # 更新卡组信息
+    upgrade_tech                = 103 # 升级科技
+    upgrade_age                 = 104 # 升级时代
+    upgrade_age_confirm         = 105 # 确认时代升级完成
+    get_friends_info            = 106 # 获取好友信息
+    use_item_rename             = 107 # 重命名(item_id:10)
+    load_mail                   = 108 # 加载邮件
+    mail_notify:[]              = 109 # 推送邮件
+    upgrade_tech_finish         = 110 # 升级科技完成
+    upgrade_tech_now            = 111 # 立即完成科技升级
+    upgrade_age_now             = 112 # 立即完成时代升级
+    use_item_exp_book           = 113 # 使用经验书(item_type:1)
+    use_item_chest              = 114 # 使用固定宝箱(item_type:5)
+    use_item_chest_random       = 115 # 使用随机宝箱(item_type:6)
+    mail_receive                = 116 # 领取邮件
+    get_battle_log              = 117 # 获取战斗日志
+    ach_update                  = 118 # 更新成就点数
+    ach_receive                 = 119 # 领取成就奖励
+    get_pokedex                 = 120 # 获取图鉴进度
+    unlock_pokedex              = 121 # 解锁图鉴
+    task_update                 = 122 # 更新任务点数
+    task_receive                = 123 # 领取任务奖励
+    buy_goods                   = 124 # 购买商品
+    receive_guide_reward        = 125 # 领取新手引导奖励
+    share_replay                = 126 # 分享录像
+    get_player_info             = 127 # 获取角色信息
+    sign_get_reward             = 128 # 签到
+    sign_get_timestamp          = 129 # 返回下次签到的时间戳
+    refresh_user_info           = 130 # 刷新自己的信息
+    bind_friend                 = 131 # 绑定好友
+    get_bind_reward             = 132 # 领取绑定好友奖励
+    get_bind_friend_info        = 133 # 获取绑定好友的信息
+    receive_monthly_card        = 134 # 领取首冲
+    introduce_gift_notify       = 135 #
+    guide_update                = 136 # 更新新手引导
+    rune_upgrade                = 137 # 符文升级
+    embed_rune                  = 138 # 符文嵌入插槽
+    forge_weapon                = 139 # 锻造武器
+    update_head_portrait        = 140 # 修改头像id 
+    update_head_frame           = 141 # 修改边框id 
+    daily_task_update_notify    = 142 # 通知每日任务更新
+    draw_daily_task_reward      = 143 # 获取每日任务奖励
+    update_daily_task           = 144 # 更新每日任务
+    exchange_code               = 145 # 兑换激活码
+    buy_black_market_goods      = 146 # 购买黑市商品
+    handle_refresh_black_market = 147 # 手动刷新黑市
+    notice_black_market_refresh = 148 # 黑市刷新通知
+    operate_windows             = 149 # 记录用户打开或者关闭的窗口
+    apply_order                 = 600 # 创建支付订单
+    apply_order_notify          = 601 # 创建订单通知
+    check_order_complete        = 602 # 检查订单是否完成
+    order_comp_send_Item_Notify = 603 # 订单道具发送通知
+    get_bag_info                = 610 # 获取背包信息
+    wear_skin                   = 611 # 穿戴时装
+    dis_items                   = 612 # 分解道具
+    shop_buy                    = 620 # 商城购买
+    read_redpoint               = 621 # 读取红点数据
+    save_redpoint               = 622 # 存储红点数据
+}
+
+pve
+{
+    # --- [150,199]
+    pve_battle_start            = 150 # pve战斗开始
+    pve_battle_update           = 151 # 更新pve战斗行为
+    pve_battle_end              = 152 # pve战斗完成
+    pve_branch_season_end       = 153 # pve赛季战斗结束
+    pve_battle_restart          = 154 # 重新开始pve战斗
+    get_pve_rank                = 155 # 获取pve地图排名
+    get_pve_branch_rank         = 156 # 获取pve支线地图排名
+    invade_battle_notify        = 157 # 推送玩家遭到入侵
+    invade_battle_start         = 158 # 入侵开始
+    invade_battle_update        = 159 # 更新invade战斗行为
+    invade_battle_end           = 160 # invade战斗结束
+    invade_battle_restart       = 161 # invade重新开始
+    get_pve_branch_friend_rank  = 162 # 获取pve支线地图好友排名
+    invade_reborn               = 163 # 入侵重生
+    invade_remove_limit         = 164 # 入侵移除限制条件
+    notify_instance_zone_update = 170 # 通知每日副本更新
+    select_daily_instance_zone  = 171 # 选择每日副本类型和难度
+    instance_zone_battle_start  = 172 # 每日副本战斗开始
+    instance_zone_battle_update = 173 # 每日副本战斗更新
+    instance_zone_battle_end    = 174 # 每日副本战斗结束
+    crystal_point_obtain        = 175 # 水晶据点获取水晶
+    instance_zone_battle_restart = 176 # 每日副本战斗reconnect
+    notice_cross_day            = 177 # 跨天触发
+    instance_zone_battle_end    = 178 # 推送branch season更新 
+    dungen_battle_start         = 179 # 地下城战斗开始 
+    dungen_battle_update        = 180 # 地下城战斗更新
+    dungen_battle_end           = 181 # 地下城战斗结束
+
+}
+
+pvp
+{
+    # ---- [200,298]
+    pvp_match                       = 200 # 匹配对手
+    pvp_match_notify                = 201 # 匹配结果通知
+    cancel_pvp_match                = 202 # 取消匹配对手
+    ready_for_battle                = 203 # 准备战斗
+    pvp_ready_notify                = 204 # 玩家准备好了
+    pvp_load_update                 = 205 # 加载更新
+    pvp_battle_field_notify         = 206 # 推送战场
+    pvp_battle_update               = 207 # 发送玩家操作
+    pvp_battle_update_notify        = 208 # 推送玩家操作
+    pvp_battle_result               = 209 # 发送战斗结果
+    pvp_battle_end_notify           = 210 # 战斗结束通知
+    pvp_battle_start_notify         = 211 # 战斗开始
+    get_pvp_battle_log              = 212 # 获取战斗录像
+    send_emoji                      = 213 # 发送表情
+    emoji_notify                    = 214 # 向客户端推送表情
+    pvp_rank                        = 215 # 国家排行榜
+    pvp_rank_friend                 = 216 # 好友排行
+    pvp_reset_treasurebox           = 217 # 重置宝箱
+    pvp_replay                      = 218 # 录像列表
+    pvp_treasurebox_cdtime          = 219 # 购买宝箱位置
+    pvp_buy_slot                    = 220 # 宝箱刷新时间
+    pvp_battle_save_input           = 221 # pvp人机对战上传操作
+    pvp_offline_notify              = 222 # 对手在线状态即时通知
+}
+
+operation
+{
+    # ---- [299,399]
+    hour_glass_reduce_time          = 299 # 沙漏秒时间
+    ads_reduce_time                 = 300 # 广告秒时间
+    pay_product                     = 301 # 支付商品
+    push_register                   = 302 # 推送注册
+    adv_provide_ai                  = 304 # 看广告提供机器人
+    pay_info_notify                 = 305 # 支付信息推送
+}
+
+stat
+{
+    # --- [400,499]
+    stat_battle_end             = 400 # 战斗结束
+}
+
+debug
+{
+    #--------[1000, 1100] ------------
+    ping                = 1000
+    oops_notify:[]      = 1010 # oops报错提示
+    delay_report:[]     = 1011 # 网络延迟报告
+    delay_ping:[]       = 1012 # 网络延迟ping
+    visit_raw_player:[]   = 1013 # 访问原始玩家数据
+
+    gm_debug:[]         = 1020 # GM调试接口
+    lua_out:[]          = 1021 # 服务器日志输出
+    gm_notify:[]        = 1022 # gm notify
+    get_pveabnormal_log = 1023 # 获取异常日志
+
+    new_runtime         = 1030 # 创建新runtime
+    enter_user         = 1033 # 创建新runtime
+}
+
+check_replay
+{
+    #--------[1200, 1299] ------------
+    check_battle_log_request                = 1200 # 战斗结果
+    check_battle_log_response               = 1201 # 战斗验证结果
+    check_battle_log_notify                 = 1202 # 战斗验证结果通知agent
+
+    check_battle_field_log                  = 1203 # pvp战斗验证结果
+    check_battle_field_log_response         = 1204 # pvp战斗验证结果
+    check_battlefield_log_notify            = 1205 # 战斗验证结果通知agent
+}
+
+robot
+{
+    #--------[1300, 1399] ------------
+    robot_load            = 1301 # 加载机器人
+    robot_login_notify    = 1302 # 请求机器人登陆
+}
+
