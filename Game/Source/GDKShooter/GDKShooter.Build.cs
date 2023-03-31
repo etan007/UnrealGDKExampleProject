@@ -19,7 +19,7 @@ public class GDKShooter : ModuleRules
 				"InputCore",
 				"Sockets",
 				"OnlineSubsystemUtils",
-				"PhysXVehicles",
+				//"PhysXVehicles",
 				"UMG",
 				"Slate",
 				"SlateCore",

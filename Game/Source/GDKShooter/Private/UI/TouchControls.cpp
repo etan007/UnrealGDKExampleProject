@@ -144,8 +144,9 @@ FReply UTouchControls::NativeOnTouchEnded(const FGeometry& InGeometry, const FPo
 void UTouchControls::NativeTick(const FGeometry& AllottedGeometry, float InDeltaTime)
 {
 	Super::NativeTick(AllottedGeometry, InDeltaTime);
-	FSlateApplication::Get().OnControllerAnalog(FGamepadKeyNames::LeftAnalogX, DefaultControllerId, LeftControllerInfo.MoveVelocity.X);
-	FSlateApplication::Get().OnControllerAnalog(FGamepadKeyNames::LeftAnalogY, DefaultControllerId, -LeftControllerInfo.MoveVelocity.Y);
+	FInputDeviceId PrimaryInputDevice = IPlatformInputDeviceMapper::Get().GetPrimaryInputDeviceForUser(FSlateApplicationBase::SlateAppPrimaryPlatformUser);
+	FSlateApplication::Get().OnControllerAnalog(FGamepadKeyNames::LeftAnalogX, DefaultControllerId, PrimaryInputDevice, LeftControllerInfo.MoveVelocity.X);
+	FSlateApplication::Get().OnControllerAnalog(FGamepadKeyNames::LeftAnalogY, DefaultControllerId, PrimaryInputDevice ,-LeftControllerInfo.MoveVelocity.Y);
 }
 
 void UTouchControls::ShowAllActionButtons(bool bEnable) const
@@ -162,14 +163,16 @@ namespace
 {
 	static FEventReply HandlePressed(UWidget* Widget, FGamepadKeyNames::Type KeyName)
 	{
-		FEventReply Reply(FSlateApplication::Get().OnControllerButtonPressed(KeyName, DefaultControllerId, false));
+		FInputDeviceId PrimaryInputDevice = IPlatformInputDeviceMapper::Get().GetPrimaryInputDeviceForUser(FSlateApplicationBase::SlateAppPrimaryPlatformUser);
+		FEventReply Reply(FSlateApplication::Get().OnControllerButtonPressed(KeyName, DefaultControllerId, PrimaryInputDevice, false));
 		Reply.NativeReply.CaptureMouse(Widget->TakeWidget());
 		return Reply;
 	}
 
 	static FEventReply HandleReleased(UTouchControls* Controls, FGamepadKeyNames::Type KeyName)
 	{
-		FEventReply Reply(FSlateApplication::Get().OnControllerButtonReleased(KeyName, DefaultControllerId, false));
+		FInputDeviceId PrimaryInputDevice = IPlatformInputDeviceMapper::Get().GetPrimaryInputDeviceForUser(FSlateApplicationBase::SlateAppPrimaryPlatformUser);
+		FEventReply Reply(FSlateApplication::Get().OnControllerButtonReleased(KeyName, DefaultControllerId, PrimaryInputDevice, false));
 		if (Reply.NativeReply.GetMouseCaptor().IsValid() == false && Controls->HasMouseCapture())
 		{
 			Reply.NativeReply.ReleaseMouseCapture();
@@ -179,15 +182,16 @@ namespace
 
 	static FEventReply HandleToggle(bool& bEnabled, UBorder* Button, FGamepadKeyNames::Type KeyName)
 	{
+		FInputDeviceId PrimaryInputDevice = IPlatformInputDeviceMapper::Get().GetPrimaryInputDeviceForUser(FSlateApplicationBase::SlateAppPrimaryPlatformUser);
 		if (bEnabled)
 		{
 			Button->SetBrushColor(FLinearColor::White);
-			FSlateApplication::Get().OnControllerButtonReleased(KeyName, DefaultControllerId, false);
+			FSlateApplication::Get().OnControllerButtonReleased(KeyName, DefaultControllerId, PrimaryInputDevice, false);
 		}
 		else
 		{
 			Button->SetBrushColor(FLinearColor::Green);
-			FSlateApplication::Get().OnControllerButtonPressed(KeyName, DefaultControllerId, false);
+			FSlateApplication::Get().OnControllerButtonPressed(KeyName, DefaultControllerId, PrimaryInputDevice, false);
 		}
 		bEnabled = !bEnabled;
 		return true;
