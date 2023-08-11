@@ -15,6 +15,7 @@ public class GDKShooter : ModuleRules
 			{
 				"Core",
 				"CoreUObject",
+				"NetCore",
 				"Engine",
 				"InputCore",
 				"Sockets",
@@ -28,7 +29,7 @@ public class GDKShooter : ModuleRules
 				"HTTP",
 				"AIModule",
 				"ApplicationCore",
-				"NetCore",
+				
 			});
 	}
 }
